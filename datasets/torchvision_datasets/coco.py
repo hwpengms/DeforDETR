@@ -17,7 +17,10 @@ import tqdm
 from io import BytesIO
 import zipfile
 
+ZIPS = dict()
+
 def get_zip_handle(fname):
+    global ZIPS
     if fname not in ZIPS:
         handle = zipfile.ZipFile(fname, 'r') 
         ZIPS[fname] = handle
