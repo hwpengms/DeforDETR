@@ -15,6 +15,36 @@ import os
 import os.path
 import tqdm
 from io import BytesIO
+import zipfile
+
+ZIPS = dict()
+
+def get_zip_handle(fname):
+    global ZIPS
+    if fname not in ZIPS:
+        handle = zipfile.ZipFile(fname, 'r') 
+        ZIPS[fname] = handle
+    return ZIPS[fname]
+
+def my_open(root, fname):
+    '''
+    root:  xxx/train2017
+    fname: file
+    '''
+    root = str(root)
+    handle = get_zip_handle(root + '.zip')
+    base_name = os.path.basename(root)
+    zname = f'{base_name}/{fname}'
+    return handle.read(zname)
+
+
+def my_Image_open(root, fname):
+    '''
+    root:  xxx/train2017
+    fname: file
+    '''
+    iob = BytesIO(my_open(root, fname))
+    return Image.open(iob)
 
 
 class CocoDetection(VisionDataset):
@@ -49,16 +79,14 @@ class CocoDetection(VisionDataset):
             if index % self.local_size != self.local_rank:
                 continue
             path = self.coco.loadImgs(img_id)[0]['file_name']
-            with open(os.path.join(self.root, path), 'rb') as f:
-                self.cache[path] = f.read()
+            self.cache[path] = my_open(self.root, path)
 
     def get_image(self, path):
         if self.cache_mode:
             if path not in self.cache.keys():
-                with open(os.path.join(self.root, path), 'rb') as f:
-                    self.cache[path] = f.read()
+                self.cache[path] = my_open(self.root, path)
             return Image.open(BytesIO(self.cache[path])).convert('RGB')
-        return Image.open(os.path.join(self.root, path)).convert('RGB')
+        return my_Image_open(self.root, path).convert('RGB')
 
     def __getitem__(self, index):
         """
