@@ -1,5 +1,24 @@
 # Deformable DETR
 
+## Submit a job to ITP cluster
+1. Set your github path into the line 57th in `ITP_scripts/src-remote/begin.py`
+
+For example:
+
+```python
+# xtrack dev
+url = "https://YOUR_ACCOUNT_NAME:YOUR_PASSWORD@github.com/hwpengms/DeforDETR"
+
+os.system(f"git clone {url} " + proj_name)
+```
+
+2. Run the script
+
+```bash
+cd ITP_scripts
+python itp_run.py --name "kan_exp2" --model_name YOUR_MODEL_NAME --work-dir YOUR_WORK_DIR 
+```
+
 By [Xizhou Zhu](https://scholar.google.com/citations?user=02RXI00AAAAJ),  [Weijie Su](https://www.weijiesu.com/),  [Lewei Lu](https://www.linkedin.com/in/lewei-lu-94015977/), [Bin Li](http://staff.ustc.edu.cn/~binli/), [Xiaogang Wang](http://www.ee.cuhk.edu.hk/~xgwang/), [Jifeng Dai](https://jifengdai.org/).
 
 This repository is an official implementation of the paper [Deformable DETR: Deformable Transformers for End-to-End Object Detection](https://arxiv.org/abs/2010.04159).
